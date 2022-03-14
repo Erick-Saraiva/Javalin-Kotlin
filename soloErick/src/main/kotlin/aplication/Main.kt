@@ -1,18 +1,14 @@
 package aplication
 
-import User
-import UserDao
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
-import java.util.concurrent.atomic.AtomicInteger
-
-
-
 
 fun main() {
 
-    data class User(val name: String, val email: String, val id: Int) {
-
+    data class User(
+        val name: String,
+        val email: String,
+        val id: Int) {
     }
 
     val users = hashMapOf(
@@ -30,13 +26,6 @@ fun main() {
             2 to User(name = "Avlis", email = "avlis23@gmail.com", id = 2),
             3 to User(name = "Silva", email = "silva23@gmail.com", id = 3)
         )
-
-        var lastId: AtomicInteger = AtomicInteger(users.size - 1)
-
-        fun save(name: String, email: String) {
-            val id = lastId.incrementAndGet()
-            users.put(id, User(name = name, email = email, id = id))
-        }
 
         fun findById(id: Int): User? {
             return users[id]
@@ -81,6 +70,14 @@ fun main() {
             val user = ctx.bodyAsClass<User>()
             userDao.update(
                 id = ctx.pathParam("users-id").toInt(),
+                user = user
+            )
+            ctx.status(204)
+        }
+        patch("/users/{user-id}") { ctx ->
+            val user = ctx.bodyAsClass<User>()
+            userDao.update(
+                id = ctx.pathParam("user-id").toInt(),
                 user = user
             )
             ctx.status(204)
